@@ -30,10 +30,6 @@ export default function compose(dataLoader, options = {}) {
         this._mounted = true;
       }
 
-      componentWillReceiveProps(props) {
-        this._subscribe(props);
-      }
-
       shouldComponentUpdate(nextProps, nextState) {
         if (shouldUpdate) {
           return shouldUpdate(this.props, nextProps);
@@ -50,6 +46,10 @@ export default function compose(dataLoader, options = {}) {
         );
       }
 
+      componentDidUpdate() {
+        this._subscribe(this.props);
+      }
+
       componentWillUnmount() {
         this._unmounted = true;
         this._unsubscribe();
@@ -57,7 +57,7 @@ export default function compose(dataLoader, options = {}) {
 
       _shouldSubscribe(props) {
         const firstRun = !this._cachedWatchingProps;
-        const nextProps = pick(props, propsToWatch);
+        const nextProps = propsToWatch === null ? props : pick(props, propsToWatch);
         const currentProps = this._cachedWatchingProps || {};
         this._cachedWatchingProps = nextProps;
 
@@ -66,8 +66,7 @@ export default function compose(dataLoader, options = {}) {
           return shouldSubscribe(currentProps, nextProps);
         }
 
-        if (propsToWatch === null) return true;
-        if (propsToWatch.length === 0) return false;
+        if (propsToWatch !== null && propsToWatch.length === 0) return false;
         return !shallowEqual(currentProps, nextProps);
       }
 

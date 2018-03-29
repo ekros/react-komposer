@@ -127,7 +127,7 @@ describe('compose', () => {
       })(Comp);
 
       const el = mount(<Container name="arunoda" />);
-      el.instance()._subscribe({ aa: 10 });
+      el.setProps({ aa: 10 });
     });
 
     it('should throw an error when sending data when unmounted', () => {
