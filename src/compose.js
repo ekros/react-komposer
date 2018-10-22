@@ -1,6 +1,6 @@
 import React from 'react';
 import shallowEqual from 'shallowequal';
-import pick from 'lodash.pick';
+import pick from 'lodash/pick';
 import { mayBeStubbed } from '@storybook/react-stubber';
 import { inheritStatics } from './utils';
 
