@@ -4,15 +4,13 @@ Feed data into React components by composing containers. <br/>
 (Works with any kind of data store whether it's Redux, Promises, RxJX, MobX or anything else)
 
 ## TOC
+
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
 
 - [Why?](#why)
 - [Installation](#installation)
 - [Simple Example](#simple-example)
-- [Other Core Functionalities](#other-core-functionalities)
-	- [Subscribing to data](#subscribing-to-data)
-	- [Show Loading screen](#show-loading-screen)
-	- [Handling errors](#handling-errors)
+- [Other Core Functionalities](#other-core-functionalities) - [Subscribing to data](#subscribing-to-data) - [Show Loading screen](#show-loading-screen) - [Handling errors](#handling-errors)
 - [Performance](#performance)
 - [Set Defaults](#set-defaults)
 - [Passing an Environment (Like Dependency Injection)](#passing-an-environment-like-dependency-injection)
@@ -29,11 +27,11 @@ Feed data into React components by composing containers. <br/>
 In React, usually we build UI components and feed data into them via containers. Let's call them data containers.
 Inside that data containers, we may need to:
 
-* access different data sources
-* show loading screens
-* handle errors
-* subscribe to data and clean-up subscripts as needed
-* re-fetch data when props changed
+- access different data sources
+- show loading screens
+- handle errors
+- subscribe to data and clean-up subscripts as needed
+- re-fetch data when props changed
 
 Among a lot of other things.
 React Komposer helps you create such data containers and you only need to worry about writing the data fetching(or integration) logic.
@@ -50,10 +48,10 @@ Let's assume we've got a UI component called Blog Post like this:
 
 ```js
 const BlogPost = ({ post }) => (
-    <div>
-        <h2>{post.title}</h2>
-        <p>{post.content}</p>
-    </div>
+  <div>
+    <h2>{post.title}</h2>
+    <p>{post.content}</p>
+  </div>
 );
 ```
 
@@ -61,35 +59,35 @@ Now we need to fetch data from the server. So, we'll create a dataLoader like th
 
 ```js
 function postDataLoader(props, onData) {
-    // load data from the server. (using props.id to identify the post)
-    // (Here'll we'll use setTimeout for demonstration purpose)
-    setTimeout(function() {
-        const post = {
-            id: props.id,
-            title: 'Hello React Komposer',
-            content: 'This will help you to load data into your components.',
-        };
-        const data = { post };
+  // load data from the server. (using props.id to identify the post)
+  // (Here'll we'll use setTimeout for demonstration purpose)
+  setTimeout(function() {
+    const post = {
+      id: props.id,
+      title: "Hello React Komposer",
+      content: "This will help you to load data into your components."
+    };
+    const data = { post };
 
-        // send the data as props to the BlogPost component.
-        // So, BlogPost will see the post object as a prop.
-        onData(null, data)
-    }, 1000);
+    // send the data as props to the BlogPost component.
+    // So, BlogPost will see the post object as a prop.
+    onData(null, data);
+  }, 1000);
 }
 ```
 
 Then let's create the container:
 
 ```js
-import { compose } from 'react-komposer';
+import { compose } from "react-komposer";
 const BlogPostContainer = compose(postDataLoader)(BlogPost);
 ```
 
 Now we could render the BlogPostContainer like this:
 
 ```js
-import ReactDOM from 'react-dom';
-ReactDOM.render(<BlogPostContainer id='post-one' />, document.body);
+import ReactDOM from "react-dom";
+ReactDOM.render(<BlogPostContainer id="post-one" />, document.body);
 ```
 
 [**Play with this example.**](http://www.webpackbin.com/4J6Z-fDlf)
@@ -106,32 +104,34 @@ For the above BlogPost component, we can write a data loader like this:
 
 ```js
 function postDataLoader(props, onData) {
-    // Create a subscription to the data server.
-    // Use props.id to identify the post.
-    // (Here'll we'll use setInterval for demonstration purpose)
+  // Create a subscription to the data server.
+  // Use props.id to identify the post.
+  // (Here'll we'll use setInterval for demonstration purpose)
 
-    const handler = setInterval(function() {
-        const post = {
-            id: props.id,
-            title: 'Hello React Komposer',
-            content: `
+  const handler = setInterval(function() {
+    const post = {
+      id: props.id,
+      title: "Hello React Komposer",
+      content: `
               This will help you to load data into your components.
               - Updated at: ${new Date().toLocaleString()}
             `
-        };
-        const data = { post };
+    };
+    const data = { post };
 
-        // send the data as BlogPost component.
-        // So, BlogPost will see the post object as a prop.
-        onData(null, data)
-    }, 1000);
+    // send the data as BlogPost component.
+    // So, BlogPost will see the post object as a prop.
+    onData(null, data);
+  }, 1000);
 
-    // return a function which cleanup the handler
-    return () => { clearInterval(handler) }
+  // return a function which cleanup the handler
+  return () => {
+    clearInterval(handler);
+  };
 }
 ```
 
-Here we are calling the **onData** callback for every one second.  We've also returned a function from where it'll be used to clear the resources allocated by the subscription when the container unmounted.
+Here we are calling the **onData** callback for every one second. We've also returned a function from where it'll be used to clear the resources allocated by the subscription when the container unmounted.
 
 [**Play with this example.**](http://www.webpackbin.com/Vk2AEfPez)
 
@@ -144,9 +144,12 @@ For any data loader, we could get this by providing a loadingHandler like this:
 
 ```js
 const options = {
-  loadingHandler: () => (<p>Loading...</p>)
+  loadingHandler: () => <p>Loading...</p>
 };
-const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+const BlogPostContainer = compose(
+  postDataLoader,
+  options
+)(BlogPost);
 ```
 
 **[Play with this example.](http://www.webpackbin.com/Vk_5lQ_xG)**
@@ -154,9 +157,7 @@ const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
 We show the loading screen until you provide a data object to the onData function. Have a look at the following data loader:
 
 ```js
-function postDataLoader(props, onData) {
-
-}
+function postDataLoader(props, onData) {}
 ```
 
 Since we've not invoked the onData callback, there'll be the loading screen forever.
@@ -167,12 +168,12 @@ Usually when we are dealing with remote data, we need to handle errors as well. 
 
 ```js
 function postDataLoader(props, onData) {
-   setTimeout(function() {
-     // Assume we got an error object
-     const error = new Error('Oops. Something is not right.');
-     // pass the error
-     onData(error);
-   }, 1000);
+  setTimeout(function() {
+    // Assume we got an error object
+    const error = new Error("Oops. Something is not right.");
+    // pass the error
+    onData(error);
+  }, 1000);
 }
 ```
 
@@ -180,13 +181,12 @@ By default, we'll throw the error to the console. But you can provide a UI for e
 
 ```js
 const options = {
-  errorHandler: (err) => (
-    <p style={{color: 'red'}}>
-       {err.message}
-    </p>
-  )
+  errorHandler: err => <p style={{ color: "red" }}>{err.message}</p>
 };
-const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+const BlogPostContainer = compose(
+  postDataLoader,
+  options
+)(BlogPost);
 ```
 
 **[Play with this example.](http://www.webpackbin.com/Nk-4vmOgf)**
@@ -203,7 +203,7 @@ In the data loader, you can access props passed to your container like this:
 
 ```js
 function postDataLoader(props, onData) {
-   console.log(props);
+  console.log(props);
 }
 ```
 
@@ -215,9 +215,12 @@ So, we can ask React Komposer to only re-run when given props have changed. Have
 
 ```js
 const options = {
-    propsToWatch: ['id']
+  propsToWatch: ["id"]
 };
-const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+const BlogPostContainer = compose(
+  postDataLoader,
+  options
+)(BlogPost);
 ```
 
 Here we only re-run the data loader only when the prop named `id` gets changed.
@@ -230,9 +233,9 @@ This gives the same functionality as props watching, but with more control. With
 
 ```js
 const options = {
-    shouldSubscribe(currentProps, nextProps) {
-        // return true if you need to re-run the data loader again.
-    }
+  shouldSubscribe(currentProps, nextProps) {
+    // return true if you need to re-run the data loader again.
+  }
 };
 ```
 
@@ -240,14 +243,16 @@ const options = {
 
 > By default, this is false.
 
-
 This will take care of the component re-rendering for every prop change. You can make the container pure by applying the following option:
 
 ```js
 const options = {
-    pure: true,
+  pure: true
 };
-const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+const BlogPostContainer = compose(
+  postDataLoader,
+  options
+)(BlogPost);
 ```
 
 Then, this will add a [pure render mixin](https://facebook.github.io/react/docs/pure-render-mixin.html) to the React component. (This will compare props in shallow manner).
@@ -262,11 +267,14 @@ Check the following example:
 
 ```js
 const options = {
-    shouldUpdate(currentProps, nextProps) {
-        // return true if you need to render the compare with nextProps.
-    },
+  shouldUpdate(currentProps, nextProps) {
+    // return true if you need to render the compare with nextProps.
+  }
 };
-const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
+const BlogPostContainer = compose(
+  postDataLoader,
+  options
+)(BlogPost);
 ```
 
 ## Set Defaults
@@ -274,19 +282,18 @@ const BlogPostContainer = compose(postDataLoader, options)(BlogPost);
 Usually, you may want to use the same set of options for every container you create. So, you could set defaults like this:
 
 ```js
-import { setDefaults } from 'react-komposer';
+import { setDefaults } from "react-komposer";
 
 const myCompose = setDefaults({
-    pure: true,
-    propsToWatch: [],
-    loadingHandler: () => (<p>Loading...</p>),
+  pure: true,
+  propsToWatch: [],
+  loadingHandler: () => <p>Loading...</p>
 });
 ```
 
 Then you can use `myCompose` instead `compose` when creating containers.
 
 > It's pretty useful to setDefaults like this create a customized composer for your app.
-
 
 You can override any of these options by providing options when creating the container.
 
@@ -296,23 +303,21 @@ This is a pretty neat feature where you can use to inject dependencies.
 
 Usually, your UI component doesn't know about app specific information. But containers do know that. Using env option of React Komposer you could pass a env where your data loaders could utilize.
 
-
 > This is useful to use with a custom composer created with setDefaults
-
 
 Have a look at the following example:
 
 ```js
-import { setDefaults } from 'react-komposer';
+import { setDefaults } from "react-komposer";
 
 // This is the reduxStore of your app.
 const reduxStore = {};
 
 const myCompose = setDefaults({
-    //...otherOptions
-    env: {
-        reduxStore
-    }
+  //...otherOptions
+  env: {
+    reduxStore
+  }
 });
 ```
 
@@ -320,10 +325,10 @@ Then you can access the environment from any dataLoader when the container is cr
 
 ```js
 function postDataLoader(props, onData, env) {
-   // access the redux container and subscribe to that
-   return env.reduxStore.subscribe((state) => {
-       onData(null, state);
-   });
+  // access the redux container and subscribe to that
+  return env.reduxStore.subscribe(state => {
+    onData(null, state);
+  });
 }
 ```
 
@@ -337,18 +342,19 @@ Have a look at the following code base:
 
 ```js
 function postDataLoader(props, onData, env) {
-   if (isSSR) {
-      const data = fetchData();
-      onData(null, data);
-      return;
-   }
+  if (isSSR) {
+    const data = fetchData();
+    onData(null, data);
+    return;
+  }
 
-   const stopSubscription = watchData((data) => {
-      onData(null, data);
-   });
-   return stopSubscription;
+  const stopSubscription = watchData(data => {
+    onData(null, data);
+  });
+  return stopSubscription;
 }
 ```
+
 ## Accessing the UI Component (via refs)
 
 Sometimes ( although not recommended) you may want to access the underlining UI component instead of the container. Then you can call it the **child** property of container instance.
@@ -368,12 +374,12 @@ export default Container3;
 With our merge utility, you could do it like this:
 
 ```js
-import { merge } from 'react-komposer';
+import { merge } from "react-komposer";
 
 export default merge(
-    compose(dataLoader1),
-    compose(dataLoader2),
-    compose(dataLoader3),
+  compose(dataLoader1),
+  compose(dataLoader2),
+  compose(dataLoader3)
 )(UIComponent);
 ```
 
@@ -388,7 +394,7 @@ For that, simply put following lines before import any of your components.
 (In React Storybook, it should be the config.js file)
 
 ```js
-import { setStubbingMode } from 'react-stubber';
+import { setStubbingMode } from "react-stubber";
 setStubbingMode(true);
 ```
 
@@ -426,11 +432,9 @@ Have a look at some example data loader generators:
 
 ```js
 function genPromiseLoader(promise) {
-    return (props, onData) => {
-      promise
-        .then((data) => onData(null, data))
-        .catch((err) => onData(err))
-    };
+  return (props, onData) => {
+    promise.then(data => onData(null, data)).catch(err => onData(err));
+  };
 }
 
 // usage
@@ -441,34 +445,36 @@ const Container = compose(genPromiseLoader(somePromiseObject))(UIComponent);
 
 ```js
 function getReduxLoader(mapper) {
-    return (props, onData, env) => {
-        // Accessing the reduxStore via the env.
-        return env.reduxStore.subscribe((state) => {
-            onData(null, mapper(state, env));
-        });
-    };
+  return (props, onData, env, container) => {
+    // Accessing the reduxStore via the env.
+    return env.reduxStore.subscribe(state => {
+      if (container._unmounted) return;
+      onData(null, mapper(state, env));
+    });
+  };
 }
 
 // usage (expect you to pass the reduxStore via the env)
-const myMapper = ({user}) => ({user});
-const Container = compose(getReduxLoader(myMapper))(UIComponent)
+const myMapper = ({ user }) => ({ user });
+const Container = compose(getReduxLoader(myMapper))(UIComponent);
 ```
 
 #### For Meteor's Tracker
 
 ```js
 function getTrackerLoader(reactiveMapper) {
-  return (props, onData, env) => {
+  return (props, onData, env, container) => {
     let trackerCleanup = null;
     const handler = Tracker.nonreactive(() => {
       return Tracker.autorun(() => {
-      	// assign the custom clean-up function.
+        if (container._unmounted) return;
+        // assign the custom clean-up function.
         trackerCleanup = reactiveMapper(props, onData, env);
       });
     });
 
     return () => {
-      if(typeof trackerCleanup === 'function') trackerCleanup();
+      if (typeof trackerCleanup === "function") trackerCleanup();
       return handler.stop();
     };
   };
@@ -476,10 +482,10 @@ function getTrackerLoader(reactiveMapper) {
 
 // usage
 function reactiveMapper(props, onData) {
-  if (Meteor.subscribe('post', props.id).ready()) {
+  if (Meteor.subscribe("post", props.id).ready()) {
     const post = Posts.findOne({ id: props.id });
     onData(null, { post });
-  };
+  }
 }
 
 const Container = compose(getTrackerLoader(reactiveMapper))(UIComponent);
